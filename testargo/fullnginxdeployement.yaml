@@ -5,7 +5,7 @@ metadata:
   labels:
     app: nginx                   # Label to identify the app
 spec:
-  replicas: 3                    # Number of desired pod replicas
+  replicas: 2                    # Number of desired pod replicas
   selector:
     matchLabels:
       app: nginx                 # Must match pod template labels
