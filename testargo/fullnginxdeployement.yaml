@@ -65,7 +65,3 @@ spec:
       dnsPolicy: ClusterFirst    # DNS policy
       nodeSelector:              # Node selection constraints
         kubernetes.io/os: linux
-      securityContext:           # Pod-level security settings
-        runAsUser: 1000
-        runAsGroup: 3000
-        fsGroup: 2000
