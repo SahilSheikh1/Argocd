@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment         # Name of the deployment
+  labels:
+    app: nginx                   # Label to identify the app
+spec:
+  replicas: 3                    # Number of desired pod replicas
+  selector:
+    matchLabels:
+      app: nginx                 # Must match pod template labels
+  strategy:                      # Deployment strategy settings
+    type: RollingUpdate          # Can be RollingUpdate or Recreate
+    rollingUpdate:              # Only used if type is RollingUpdate
+      maxSurge: 1                # Extra pods allowed during update (1 pod more than desired)
+      maxUnavailable: 1          # Max pods that can be unavailable during update
+      
+  minReadySeconds: 5             # Minimum seconds for a pod to be ready before considered available
+  revisionHistoryLimit: 10       # How many old ReplicaSets to retain for rollback
+  progressDeadlineSeconds: 600   # Time before marking deployment as failed if no progress
+  paused: false                  # Can be set to true to pause the deployment
+
+  template:                      # Template for the pod
+    metadata:
+      labels:
+        app: nginx               # Labels used by selector above
+    spec:                        # Pod specification
+      containers:
+        - name: nginx
+          image: nginx:1.25      # NGINX image from Docker Hub
+          ports:
+            - containerPort: 80  # Port exposed by the container
+          resources:             # Optional: CPU and memory limits and requests
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          livenessProbe:         # Probe to check if the container is alive
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:        # Probe to check if the container is ready to serve traffic
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          env:                   # Environment variables for the container
+            - name: ENVIRONMENT
+              value: "production"
+          # volumeMounts:          # Mount volumes to the container
+          #   - name: nginx-config
+          #     mountPath: /etc/nginx/nginx.conf
+          #     subPath: nginx.conf
+      # volumes:                   # Define volumes used in pod
+      #   - name: nginx-config
+      #     configMap:
+      #       name: nginx-config   # Reference to a ConfigMap containing nginx.conf
+      restartPolicy: Always      # Restart policy (Always, OnFailure, Never)
+      terminationGracePeriodSeconds: 30  # Time to wait before killing pod on shutdown
+      dnsPolicy: ClusterFirst    # DNS policy
+      nodeSelector:              # Node selection constraints
+        kubernetes.io/os: linux
+      securityContext:           # Pod-level security settings
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
