@@ -27,7 +27,7 @@ spec:
     spec:                        # Pod specification
       containers:
         - name: nginx
-          image: nginx:1.25      # NGINX image from Docker Hub
+          image: nginx:1.16.0     # NGINX image from Docker Hub
           ports:
             - containerPort: 80  # Port exposed by the container
           resources:             # Optional: CPU and memory limits and requests
