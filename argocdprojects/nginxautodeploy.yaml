@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-testapp
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/SahilSheikh1/Argocd.git
+    path: testargo
+    targetRevision: main
+    directory:
+      jsonnet:
+        tlas:
+          - name: ''
+            value: ''
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nginx-solo
